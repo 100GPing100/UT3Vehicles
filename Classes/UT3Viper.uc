@@ -1,6 +1,6 @@
 /*
- * Copyright © 2012-2013 100GPing100
- * Copyright © 2014 GreatEmerald
+ * Copyright ï¿½ 2012-2013, 2017 JosÃ© 'zeluisping' GuimarÃ£es <zeluis.100@gmail.com>
+ * Copyright ï¿½ 2014 GreatEmerald
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -44,6 +44,7 @@ class UT3Viper extends ONSHoverBike;
 #exec OBJ LOAD FILE=../Animations/UT3ViperAnims.ukx
 #exec OBJ LOAD FILE=../Textures/UT3ViperTex.utx
 #exec OBJ LOAD FILE=../StaticMeshes/UT3ViperSM.usx
+#exec OBJ LOAD FILE=../Sounds/UT3A_Vehicle_Viper.uax
 
 
 /* Time, in seconds, that the driver has to activate the self-destruct. */
@@ -554,7 +555,7 @@ Begin:
 //============END============
 
 
-DefaultProperties
+defaultproperties
 {
 	// Looks.
 	Mesh=Mesh'UT3ViperAnims.VH_NecrisManta';
@@ -568,7 +569,6 @@ DefaultProperties
 	// Weapons.
 	DriverWeapons(0)=(WeaponClass=Class'UT3Weap_ViperGun',WeaponBone="FrontBody")
 
-
 	// Health
 	Health=200;
 	HealthMax=200;
@@ -578,19 +578,13 @@ DefaultProperties
 	VehicleNameString="UT3 Viper";
 
 	// Movement
-	GroundSpeed=1000.0;
-	AirSpeed=2400.0;
 	JumpDuration=0.12;
 	JumpDelay=2.0;
 	MomentumMult=2.2; // 3.2
 	JumpForceMag=60.0; // 67.5
 	JumpTraceDist=175.0;
-	NormalGravScale = 0.9;
-	GlidingGravScale = 0.1;
-	GlideMaxThrustForce = 1.0;
-	GlideMaxStrafeForce = 1.0;
-	NormalMaxThrustForce = 27.0;
-	NormalMaxStrafeForce = 20.0;
+	NormalGravScale=0.9;
+	GlidingGravScale=0.2;
 
 	// Sound.
 	IdleSound=Sound'UT3A_Vehicle_Viper.Sounds.A_Vehicle_Viper_EngineLoop';
@@ -609,37 +603,66 @@ DefaultProperties
 	SoundRadius=900;
 
 	// SelfDestruct.
-	SelfDestructWindow = 3;
-	SelfDestructForceDuration = 1;
-	DmgType_SelfDestruct = Class'UT3DmgType_SelfDestruct'
-	SelfDestructDamage = 800;
-	SelfDestructRadius = 600;
-	SelfDestructMomentum = 200000;
-	BoostForce = 500; // 200
-	TimeToRiseForSelfDestruct = 1.1;
+	SelfDestructWindow=3;
+	SelfDestructForceDuration=1;
+	DmgType_SelfDestruct=Class'UT3DmgType_SelfDestruct'
+	SelfDestructDamage=800;
+	SelfDestructRadius=600;
+	SelfDestructMomentum=200000;
+	BoostForce=500; // 200
+	TimeToRiseForSelfDestruct=1.1;
 
 	// Misc.
-	bCanBeBaseForPawns = true;
-	CollisionHeight=50;
-	CollisionRadius=220;
+	bCanBeBaseForPawns=true;
 	DrivePos=(X=10.0,Y=0.0,Z=50.0);
 	ObjectiveGetOutDist=750.0;
 	MaxDesireability=0.6;
 	LinkHealMult=0.35;
 	MeleeRange=-100.0;
-	HoverCheckDist=100; // 150
 
-	TurnDamping=55;
+	// Collision
+	CollisionHeight=50;
+	CollisionRadius=220;
+
+	// Hover
+	HoverSoftness=0.09;
+	HoverPenScale=1.5;
+	HoverCheckDist=120;
+
+	// Staying upright
+	UprightStiffness=600;
+	UprightDamping=200;
+
+	// Thrust
+	MaxThrustForce=24.0;
+		NormalMaxThrustForce=24.0;
+	LongDamping=0.03;
+	GlideMaxThrustForce=1.0;
+	
+	// Strafe
+	MaxStrafeForce=20.0;
+		NormalMaxStrafeForce=20.0;
+	LatDamping=0.03;
+	GlideMaxStrafeForce=1.0;
+
+	// Movement turn (yaw)
 	TurnTorqueFactor=750.0;
 	TurnTorqueMax=1000.0;
-	MaxYawRate=150.0;
+	TurnDamping=55;
+	MaxYawRate=3.0;
 
-	RollTorqueTurnFactor=200.0;
-	RollTorqueStrafeFactor=65.0;
-	RollTorqueMax=200.0;
-	RollDamping=20;
-
-	UpDamping=0.0;
-
+	// Movement pitch
+	PitchTorqueFactor=750.0;
 	PitchTorqueMax=35.0;
+	PitchDamping=25;
+
+	// Movement roll
+	RollTorqueTurnFactor=200.0;
+	RollTorqueStrafeFactor=30.0;
+	RollTorqueMax=100.0;
+	RollDamping=20;
+	
+	// Random forces
+	MaxRandForce=3.0;
+	RandForceInterval=0.75;
 }
