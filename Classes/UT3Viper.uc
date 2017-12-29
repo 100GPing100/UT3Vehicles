@@ -557,6 +557,11 @@ Begin:
 
 defaultproperties
 {
+	ThrusterOffsets=()
+	ThrusterOffsets(0)=(X=190,Y=0,Z=0)
+	ThrusterOffsets(1)=(X=55,Y=0,Z=0)
+	ThrusterOffsets(2)=(X=-50,Y=0,Z=0)
+
 	// Looks.
 	Mesh=Mesh'UT3ViperAnims.VH_NecrisManta';
 	DestroyedVehicleMesh=StaticMesh'UT3ViperSM.UT3Viper';
@@ -627,7 +632,7 @@ defaultproperties
 	// Hover
 	HoverSoftness=0.09;
 	HoverPenScale=1.5;
-	HoverCheckDist=120;
+	HoverCheckDist=130;
 
 	// Staying upright
 	UprightStiffness=600;
