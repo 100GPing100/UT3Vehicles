@@ -100,6 +100,8 @@ var bool bStoppedRise;
 /* True from the instance we jump until we're able to jump again (TraceJump(JumpTraceDist) == true). */
 var bool bJumped;
 
+var IntBox EjectIconCoords;
+
 
 replication
 {
@@ -194,6 +196,23 @@ function EjectDriver()
 //===============================
 // END Self Destruct.
 //===============================
+
+simulated function DrawHUD(Canvas C)
+{
+    local PlayerController PC;
+
+    super.DrawHUD(C);
+
+    // don't draw if we are dead, scoreboard is visible, etc
+    PC = PlayerController(Controller);
+    if (Health < 1 || PC == None || PC.MyHUD == None || PC.MyHUD.bShowScoreboard) {
+		return;
+	}
+
+    if (bSelfDestructReady && Level.TimeSeconds - SelfDestructStartTime <= SelfDestructWindow) {
+        class'UT3HudOverlay'.static.DrawToolTip(C, PC, "Use", C.ClipX * 0.5, C.ClipY * 0.92, EjectIconCoords);
+	}
+}
 
 simulated function KApplyForce(out Vector Force, out Vector Torque)
 {
@@ -629,6 +648,7 @@ defaultproperties
 	SelfDestructMomentum=200000;
 	BoostForce=500; // 200
 	TimeToRiseForSelfDestruct=1.1;
+	EjectIconCoords=(X1=92,Y1=317,X2=50,Y2=50);
 
 	// Misc.
 	bCanBeBaseForPawns=true;
