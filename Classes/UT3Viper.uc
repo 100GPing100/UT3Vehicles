@@ -648,7 +648,7 @@ defaultproperties
 	SelfDestructMomentum=200000;
 	BoostForce=500; // 200
 	TimeToRiseForSelfDestruct=1.1;
-	EjectIconCoords=(X1=92,Y1=317,X2=50,Y2=50);
+	EjectIconCoords=(X1=93,Y1=316,X2=46,Y2=52);
 
 	// Misc.
 	bCanBeBaseForPawns=true;
