@@ -71,8 +71,6 @@ var string CurrentAnim;
 var int JumpTraceDist;
 /* Force for the self-destruction boost. */
 var vector BoostDir;
-/* Indicates if we have calculated the boost force (so we do not calculate it each tick). */
-var bool bGotBoostDir;
 /* Normal gravity scale. */
 var float NormalGravScale;
 /* Gravity scale when gliding. */
@@ -171,6 +169,7 @@ function EjectDriver()
 
 	OldPawn = Driver;
 
+	CalculateBoostDir();
 	KDriverLeave(true);
 	bEjected = true;
 
@@ -200,6 +199,11 @@ simulated function KApplyForce(out Vector Force, out Vector Torque)
 {
 	super.KApplyForce(Force, Torque);
 
+	if (bEjected) {
+		Force = BoostDir;
+		return;
+	}
+
 	if (bDriving && JumpCountdown > 0.0) { // jump
 		Force += Vect(0,0,1) * JumpForceMag;
 		PlayAnim('JumpStart', 1.2, 0.15);
@@ -214,26 +218,35 @@ simulated function KApplyForce(out Vector Force, out Vector Torque)
 	if (KGetActorGravScale() == GlidingGravScale) // Do not jump too much.
 		Force += vect(0,0,-0.5) * Mass * GlidingGravScale;
 		*/
-
-	if (bEjected) {
-		if (bGotBoostDir == false) {
-			// only calculate 'BoostDir' once
-			BoostDir = GetBoostForce();
-			bGotBoostDir = true;
-		}
-		Force = BoostDir;
-	}
 }
 
-function vector GetBoostForce()
+function CalculateBoostDir()
 {
-	local Rotator AimRotation;
+	local PlayerController PC;
+	local vector AimPoint;
+	local vector HitLocation;
+	local vector HitNormal;
+	local Actor HitActor;
 
-	AimRotation.Pitch = Weapons[0].CurrentAim.Pitch;
-	AimRotation.Yaw = Rotation.Yaw;
-	AimRotation.Roll = Rotation.Roll;
+	if (Controller == none) {
+		BoostDir = vector(Rotation) * BoostForce;
+		return;
+	}
 
-	return vector(AimRotation) * BoostForce;
+	PC = PlayerController(Controller);
+	if (PC == none) {
+		BoostDir = Normal(Driver.Controller.FocalPoint - Location) * BoostForce;
+		return;
+	}
+
+	AimPoint = PC.CalcViewLocation + 8000 * Vector(PC.CalcViewRotation);
+	HitActor = Trace(HitLocation, HitNormal, AimPoint, PC.CalcViewLocation, true);
+
+	if (HitActor != none) {
+		AimPoint = HitLocation;
+	}
+
+	BoostDir = Normal(AimPoint - Location) * BoostForce;	
 }
 
 simulated function CheckJumpDuck()
