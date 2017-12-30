@@ -377,7 +377,7 @@ simulated function Tick(float DeltaTime)
 	if (bSelfDestructReady == false && bJumped == true && bStoppedRise == false && (Rise > 0 || bWeaponIsAltFiring)) {
 		RiseTime += DeltaTime;
 
-		if (RiseTime >= 1.1) {
+		if (RiseTime >= TimeToRiseForSelfDestruct) {
 			RiseTime = 0.0;
 			bSelfDestructReady = true;
 			GoToState('PrepareSelfDestruct');
