@@ -665,7 +665,7 @@ defaultproperties
 	// Hover
 	HoverSoftness=0.09;
 	HoverPenScale=1.5;
-	HoverCheckDist=130;
+	HoverCheckDist=135;
 
 	// Staying upright
 	UprightStiffness=600;
