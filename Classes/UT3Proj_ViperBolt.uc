@@ -49,18 +49,27 @@ var int Bounces;
 simulated event HitWall(vector HitNormal, Actor HitWall)
 {
 	if (HitWall.bCanBeDamaged) {
+		HitWall.TakeDamage(Damage, Instigator, Location, Normal(Velocity) * MomentumTransfer, MyDamageType);
 		Explode(Location, HitNormal);
+		return;
 	}
 
-	SetPhysics(PHYS_Falling);
-	if (Bounces > 0) {
-		PlaySound(ExplosionSound);
-		Velocity = 0.8 * (Velocity - 2.0 * HitNormal * (Velocity dot HitNormal));
-		SetRotation(rotator(Velocity));
-		Acceleration = AccelerationMagnitude * Normal(Velocity);
-		--Bounces;
-	} else {
+	if (Bounces <= 0) {
+		SetPhysics(PHYS_None);
 		Explode(Location, HitNormal);
+		return;
+	}
+
+	// Bounces > 0
+	SetPhysics(PHYS_Falling);
+	PlaySound(ExplosionSound);
+	Velocity = 0.8 * (Velocity - 2.0 * HitNormal * (Velocity dot HitNormal));
+	SetRotation(rotator(Velocity));
+	Acceleration = AccelerationMagnitude * Normal(Velocity);
+	--Bounces;
+
+	if (EffectIsRelevant(Location, false)) {
+		Spawn(HitEffectClass,,, Location + HitNormal * 5, rotator(-HitNormal));
 	}
 }
 
@@ -77,11 +86,12 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 
 simulated function ProcessTouch(Actor Other, vector HitLocation)
 {
-    if (Other != Instigator && (Vehicle(Instigator) == None || Vehicle(Instigator).Driver != Other))
-    {
-	    Other.TakeDamage(Damage, Instigator, HitLocation, Normal(Velocity) * MomentumTransfer, MyDamageType);
-		Explode(HitLocation, Normal(HitLocation-Other.Location));
-    }
+	if (Other == Instigator || (Vehicle(Other) != None && Vehicle(Other).Driver == Instigator)) {
+		return;
+	}
+
+	Other.TakeDamage(Damage, Instigator, HitLocation, Normal(Velocity) * MomentumTransfer, MyDamageType);
+	Explode(HitLocation, Normal(HitLocation - Other.Location));
 }
 
 
@@ -97,7 +107,7 @@ DefaultProperties
 	Damage=36;
 	DamageRadius=0;
 	MomentumTransfer=4000;
-	//MyDamageType=class'DmgType_ViperBolt';
+	MyDamageType=class'UT3DmgType_ViperBolt';
 
 	// Sound.
 	ExplosionSound=Sound'UT3A_Vehicle_Viper.Sounds.A_Vehicle_Viper_PrimaryFireImpact';
